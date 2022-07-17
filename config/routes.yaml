@@ -1,0 +1,58 @@
+#index:
+#    path: /
+#    controller: App\Controller\DefaultController::index
+
+api_aircrafts:
+  path:       /api/aircrafts
+  controller: App\Controller\AircraftsController::index
+  methods:    GET|HEAD
+
+api_aircrafts_show:
+  path:       /api/aircrafts/{call_sign}
+  controller: App\Controller\AircraftsController::show
+  methods:    GET|HEAD
+
+api_aircrafts_creat:
+  path:       /api/aircrafts
+  controller: App\Controller\AircraftsController::new
+  methods:    POST
+
+api_aircrafts_update:
+  path:       /api/aircrafts/{id}
+  controller: App\Controller\AircraftsController::update
+  methods:    PUT
+
+api_aircrafts_locations:
+  path:       /api/aircrafts/{call_sign}/locations
+  controller: App\Controller\AircraftsController::locations
+  methods:    GET|HEAD
+
+api_locations:
+  path:       /api/locations
+  controller: App\Controller\LocationsController::index
+  methods:    GET|HEAD
+
+api_locations_update:
+  path:       /api/{call_sign}/location
+  controller: App\Controller\LocationsController::update
+  methods:    PUT
+
+api_intents:
+  path:       /api/intents
+  controller: App\Controller\IntentsController::index
+  methods:    GET|HEAD
+
+api_intents_update:
+  path:       /api/{call_sign}/intent
+  controller: App\Controller\IntentsController::create
+  methods:    POST
+
+api_weather:
+  path:       /api/public/weather/forecasts
+  controller: App\Controller\WeatherController::index
+  methods:    GET|HEAD
+
+api_weather_show:
+  path:       /api/public/{call_sign}/weather
+  controller: App\Controller\WeatherController::show
+  methods:    GET|HEAD
