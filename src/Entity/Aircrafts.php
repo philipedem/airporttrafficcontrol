@@ -6,6 +6,7 @@ use App\Repository\AircraftsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=AircraftsRepository::class)
@@ -21,26 +22,31 @@ class Aircrafts
 
     /**
      * @ORM\Column(name="aircraft_name", type="string", length=100, unique=true)
+     * @Assert\NotBlank
      */
     private $name;
 
     /**
      * @ORM\Column(name="aircraft_type", type="string", length=10)
+     * @Assert\NotBlank
      */
     private $type;
 
     /**
      * @ORM\Column(name="aircraft_capacity", type="integer", nullable=true)
+     * @Assert\GreaterThan(0)
      */
     private $capacity;
 
     /**
      * @ORM\Column(name="aircraft_call_sign", type="string", length=20, unique=true)
+     * @Assert\NotBlank
      */
     private $callsign;
 
     /**
      * @ORM\Column(name="aircraft_state", type="string", length=20)
+     * @Assert\NotBlank
      */
     private $state;
 
@@ -58,6 +64,7 @@ class Aircrafts
     {
         $this->locations = new ArrayCollection();
         $this->intents = new ArrayCollection();
+        $this->state = 'PARKED';
     }
 
     public function getId(): ?int

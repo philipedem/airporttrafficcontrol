@@ -24,16 +24,25 @@ class WeatherController extends AbstractController
         $weathers = $repository->findAll();
 
         if (!$weathers){
-            return $this->json(["No Weather Forecasts available"], 404);
+            $data[] = [
+                "description"   => "broken clouds",
+                "temperature"   => 300.36,
+                "visibility"    => 10000,
+                "wind"          => [
+                    "speed" => 5.97,
+                    "deg"   => 213
+                ],
+                "last_update"   => date('Y-m-d H:i:s')
+            ];
+            return $this->json($data, 404);
         }
 
         foreach ($weathers as $weather){
             $data[] = [
-                "id"            => $$weather->getId(),
-                "description"   => $$weather->getDescription(),
-                "temperature"   => $$weather->getTemperature(),
-                "visibility"    => $$weather->getVisibility(),
-                "wind"          => $$weather->getWind(),
+                "description"   => $weather->getDescription(),
+                "temperature"   => $weather->getTemperature(),
+                "visibility"    => $weather->getVisibility(),
+                "wind"          => $weather->getWind(),
                 "last_update"   => $weather->getLastUpdate()
             ];
         }
@@ -55,13 +64,26 @@ class WeatherController extends AbstractController
         }
 
         $currentWeather = $weatherRepo->getCurrentWeatherUpdate();
-        if (!empty($currentWeather)){
+        if ($currentWeather){
             $data = [
-                "description"   => $currentWeather['description'],
-                "temperature"   => $currentWeather['temperature'],
-                "visibility"    => $currentWeather['visibility'],
-                "wind"          => $currentWeather['wind'],
-                "last_update"   => $currentWeather['last_update']
+                "description"   => $currentWeather->getDescription(),
+                "temperature"   => $currentWeather->getTemperature(),
+                "visibility"    => $currentWeather->getVisibility(),
+                "wind"          => $currentWeather->getWind(),
+                "last_update"   => $currentWeather->getLastUpdate()
+            ];
+        }
+        //
+        else{
+            $data = [
+                "description"   => "broken clouds",
+                "temperature"   => 300.36,
+                "visibility"    => 10000,
+                "wind"          => [
+                    "speed" => 5.97,
+                    "deg"   => 213
+                ],
+                "last_update"   => date('Y-m-d H:i:s')
             ];
         }
 

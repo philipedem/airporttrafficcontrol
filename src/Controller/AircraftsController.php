@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
  * @Route("/api", name="api_")
@@ -75,7 +76,7 @@ class AircraftsController extends AbstractController
     /**
      * @Route("/aircrafts", name="aircrafts_creat")
      */
-    public function new(AircraftsRepository $repository, UserRepository $userRepo, ApiTokenRepository $tokenRepo, Request $request): JsonResponse //, ValidatorInterface $validator
+    public function new(AircraftsRepository $repository, UserRepository $userRepo, ApiTokenRepository $tokenRepo, UserPasswordHasherInterface $passwordHasher, Request $request, ValidatorInterface $validator): JsonResponse
     {
         //Extract Request input parameters
         $_REQUEST = json_decode($request->getContent(),true);
@@ -85,12 +86,13 @@ class AircraftsController extends AbstractController
         $aircraft->setAircraftType($_REQUEST['type']);
         $aircraft->setAircraftCapacity($_REQUEST['capacity']);
         $aircraft->setAircraftCallSign($_REQUEST['callsign']);
-        $aircraft->setAircraftCurrentState('PARKED');
+
+        //$aircraft->setAircraftCurrentState('PARKED');
         // Validate input data
-        /* $errors = $validator->validate($aircraft);
+        $errors = $validator->validate($aircraft);
         if (count($errors) > 0){
             return $this->json([(string) $errors], 400);
-        } */
+        }
         //save new record
         $repository->add($aircraft, true);
         //
@@ -98,19 +100,23 @@ class AircraftsController extends AbstractController
         $_user = new User();
         $_user->setCallsign($_REQUEST['callsign']);
         $_user->setRoles(array());
-        $nonce = "fxmAMC5TiY2_)(eh2DfbOOX4*&F73ldggm8KZP35N48t3OVbTaoOpa";
-        $passwordHash = hash_hmac('sha512', $_REQUEST['callsign'], $nonce);
-        $_user->setPassword($passwordHash);
+        //
+        $hashedPassword = $passwordHasher->hashPassword(
+            $_user,
+            $_REQUEST['callsign']
+        );
+        //
+        $_user->setPassword($hashedPassword);
         $userRepo->add($_user, true);
         //
         $_token = new ApiToken();
-        $_token->setToken($passwordHash);
+        $_token->setToken($hashedPassword);
         $_token->setUser($_user);
         $tokenRepo->add($_token, true);
         
         return $this->json([
             "message" => "Created new Aircraft successfully.",
-            "token" => $passwordHash
+            "token" => $hashedPassword
         ]);
     }
 

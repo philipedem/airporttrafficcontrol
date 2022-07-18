@@ -35,7 +35,7 @@ class fetchWeatherCommand extends Command
         $io = new SymfonyStyle($input, $output);
         $count = $this->weatherRespository->fetchWeatherUpdates();
         //
-        $io->success(sprintf('Current weather update obtained', $count));
+        $io->success(sprintf('Current weather update obtained: "%s"', $count));
         //
         return Command::SUCCESS;
     }
